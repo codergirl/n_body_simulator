@@ -1,0 +1,23 @@
+   
+   This program is a simple simulation of the N-body problem.
+   It takes two parameters,
+       NUM_BODIES - the number of bodies to simulate
+       NUM_TIME_STEPS - the number of times to repeat simulation
+       
+   Please run by going
+       mpiexec -n NUM_THREADS ring NUM_BODIES NUM_TIME_STEPS
+
+   Please note that if NUM_BODIES does not divide evenly into NUM_THREADS,
+   there will be elements at the end of the arrays which remain uninitialized.
+   
+   I use a ring to communicate the positions of the bodies. I wrap the 
+   positions of the bodies. I also do not let the distance between bodies
+   get too small, to prevent the forces from getting huge.
+   
+   Note. Every process has a copy of an array with the positions of all
+   other bodies. My implementation retains consistent array indexing 
+   across all the processes. The ordering of the particles however does 
+   not matter, and this method reqiures extra calculations which aren't
+   necessary. However it was easier to ensure that my messages were being
+   passed correctly by implementing it this way.
+
