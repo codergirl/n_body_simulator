@@ -73,7 +73,7 @@ int n_body(int NUM_PROCESSORS, int rank)
    srand(time(NULL) + rank);
       
    float all_positions[NUM_BODIES][2];
-   float my_positions[chunk_size][2];              // each thread handles its own chunk    
+   float my_positions[chunk_size][2];   // each thread handles its own chunk    
    float recv_positions[chunk_size][2];
    float v[chunk_size][2];
    
@@ -93,7 +93,8 @@ int n_body(int NUM_PROCESSORS, int rank)
       {
          if (rank % 2 == 1)
          {
-			MPI_Send(&my_positions[0], chunk_size*2, MPI_FLOAT, right_rank, TAG, WORLD); // my_positions should have been sent, ok to modify now
+			MPI_Send(&my_positions[0], chunk_size*2, MPI_FLOAT, right_rank, TAG, WORLD); 
+            // my_positions should have been sent, ok to modify now
 			MPI_Recv(&my_positions[0], chunk_size*2, MPI_FLOAT, left_rank,  TAG, WORLD, &status);
 			
          }
@@ -119,9 +120,8 @@ int n_body(int NUM_PROCESSORS, int rank)
          //printf("rank#%d i=%d pos=%d\n", rank, i, (pos+k));
       }
       
-      MPI_Barrier(WORLD);
+      MPI_Barrier(WORLD);  // catch up
       
-	 
 
       //for (pos=i*chunk_size; pos<(i+1)*chunk_size; pos++)
       for (i=0; i<chunk_size; i++)
@@ -168,7 +168,8 @@ int n_body(int NUM_PROCESSORS, int rank)
       
       for (i=0; i<chunk_size; i++)
       {
-         MPE_Draw_circle(handle, all_positions[rank*chunk_size+i][0], all_positions[rank*chunk_size+i][1], CIRCLE_RAD, MPE_WHITE);
+         MPE_Draw_circle(handle, all_positions[rank*chunk_size+i][0], all_positions[rank*chunk_size+i][1], 
+                         CIRCLE_RAD, MPE_WHITE);
       }
    }
    return 0;
@@ -197,8 +198,6 @@ int calculate_force(int particle_pos, float all_positions[][2], float *fx, float
 		 rSq = xdiff*xdiff + ydiff*ydiff;
          //printf("particle pos = %d, i = %d, r2 = %.6f\n", particle_pos, i, rSq);
          
-         
-         
 		 if (rSq != 0)
 		 {
 		    F = (G * m * m) / rSq;  //otherwise F=0
@@ -219,8 +218,6 @@ int calculate_force(int particle_pos, float all_positions[][2], float *fx, float
 		 //   fx_next = 0;
 		 //   fy_next = 0;
 		 //}
-         
-		 //printf("F=%.6f, fx=%.6f, fy=%.6f, rSq=%.6f          particlePos=%d, i=%d\n", F, fx_next, fy_next, rSq, particle_pos, i);
       }
    }
 
